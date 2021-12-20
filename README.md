@@ -19,7 +19,7 @@
 <span id="Fundamentals"> </span>
 # Learn Programing Fundamentals ,HTMl and CSS
 
-![100](https://progress-bar.dev/0/?title=Done)
+![100%](https://progress-bar.dev/100/?title=Done)
 <br />
 - ## Programming Foundations series and HTML and CSS from Linkdin Learning
 
@@ -45,7 +45,7 @@
 
 <span id="MERN"></span>
 # MERN Stack
-![100](https://progress-bar.dev/0/?title=Done)
+![100%](https://progress-bar.dev/100/?title=Done)
 <br />
 - [x] ![#EC5E5D](https://via.placeholder.com/12/EC5E5D/000000?text=+) `done` `29h 30m` - 13 - [The Modern JavaScript Bootcamp](Udemy/The%20Modern%20JavaScript%20Bootcamp/) 
 - [x] ![#EC5E5D](https://via.placeholder.com/12/EC5E5D/000000?text=+) `done` `39h` - 14 - [The Complete React Developer Course](Udemy/The%20Complete%20React%20Developer%20Course)
