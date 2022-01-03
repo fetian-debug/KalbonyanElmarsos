@@ -1,1 +1,3 @@
-The Modern JavaScript Bootcamp
+// The Modern JavaScript Bootcamp
+
+console.log('Hello World')

@@ -1,1 +1,4 @@
-The Modern JavaScript Bootcamp
+## The Modern JavaScript Bootcamp
+
+## JavaScript Arrays
+--------------------

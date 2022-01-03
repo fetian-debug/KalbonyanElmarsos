@@ -1,1 +1,10 @@
-The Modern JavaScript Bootcamp
+// The Modern JavaScript Bootcamp
+
+const person = {
+    age: 27
+}
+
+person.age = 28
+// person = {}
+
+console.log(person)
