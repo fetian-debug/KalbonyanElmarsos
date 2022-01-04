@@ -15,4 +15,5 @@
 - Learning about other languages
 -------------------------------
 <br>[Course Link](https://www.linkedin.com/learning/programming-foundations-fundamentals-3/)
-<br>[Preview Certificate](https://www.linkedin.com/learning/certificates/d21d392b37305baea3f9e7961b9b64280509afeefaee37a8cdd36c9be2c1c24d?trk=share_certificate)
+<br>[Preview Certificate](https://drive.google.com/file/d/1sa5h_XSkFj10aWR3tmIiJhvHs0rg540k/view?usp=sharing)
+<br>[Preview Certificate in LinkedIn](https://www.linkedin.com/learning/certificates/d21d392b37305baea3f9e7961b9b64280509afeefaee37a8cdd36c9be2c1c24d?trk=share_certificate)
