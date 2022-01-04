@@ -1,6 +1,6 @@
 ## Programming Foundation Fundamentals 
 
-## Challenge Requirements And Solution
+## Challenges Requirements And Solution
 --------------------------------------
 
 ### Challenge 1 : Guessing Game Requirements
@@ -37,7 +37,7 @@ print("Thanks for playing!")
 
 
 
-### Challenge 1 : Solution
+### Challenge 2 : Solution
 
 - [Favorite Cities Challenge](https://raw.githubusercontent.com/fetian-debug/KalbonyanElmarsos/main/Linkedin-Learning/Programming-Foundation-Fundamentals/Challengs/Favorite-Cities-Challenge.py)
 
