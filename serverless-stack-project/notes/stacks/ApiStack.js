@@ -11,6 +11,8 @@ export default class ApiStack extends sst.Stack {
 
     // Create the API
     this.api = new sst.Api(this, "Api", {
+      customDomain:
+        scope.stage === "prod" ? "api.fetian.xyz" : undefined,
       defaultAuthorizationType: "AWS_IAM",
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
       defaultFunctionProps: {
@@ -34,8 +36,8 @@ export default class ApiStack extends sst.Stack {
     this.api.attachPermissions([table]);
 
     // Show the API endpoint in the output
-    this.addOutputs({
-      ApiEndpoint: this.api.url,
-    });
-  }
+   this.addOutputs({
+    ApiEndpoint: this.api.customDomainUrl || this.api.url,
+  });
+    }
 }
