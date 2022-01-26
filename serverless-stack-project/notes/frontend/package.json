@@ -3,20 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@stripe/react-stripe-js": "^1.7.0",
-    "@stripe/stripe-js": "^1.22.0",
-    "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
-    "aws-amplify": "^4.3.12",
+    "@sentry/browser": "^6.11.0",
+    "@stripe/react-stripe-js": "^1.4.1",
+    "@stripe/stripe-js": "^1.17.1",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "aws-amplify": "^4.2.3",
     "react": "^17.0.2",
-    "react-bootstrap": "1.6.1",
+    "react-bootstrap": "^1.6.1",
     "react-dom": "^17.0.2",
-    "react-icons": "4.2.0",
-    "react-router-bootstrap": "0.25.0",
-    "react-router-dom": "5.2.0",
-    "react-scripts": "5.0.0",
-    "web-vitals": "^2.1.4"
+    "react-icons": "^4.2.0",
+    "react-router-bootstrap": "^0.25.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "sst": "^0.0.7",
+    "web-vitals": "^1.1.2"
   },
   "scripts": {
     "start": "sst-env -- react-scripts start",
@@ -41,5 +43,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@serverless-stack/static-site-env": "^0.60.4"
   }
 }
