@@ -1,7 +1,7 @@
 const config = {
   MAX_ATTACHMENT_SIZE: 5000000,
   STRIPE_KEY: "pk_test_51KLcSOFSRwTmjgjdxKMwQsaGekL71o8kEVxR6YCz0HfGlONtP6A2o2YeCwLGiqXaguBwKho5c0zpFabRnagGjeVI00LllJGAOK",
-  // SENTRY_DSN: "https://5f83aa2e21064e47bab8a1f308f940eb@sentry.io/5185720",
+  SENTRY_DSN: "https://35b77be8d6e040f185af088fbf3327be@o1126845.ingest.sentry.io/6168296",
   // Backend config
   s3: {
     REGION: process.env.REACT_APP_REGION,
