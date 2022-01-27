@@ -1,6 +1,6 @@
 // The Modern JavaScript Bootcamp
 
-let name = '  Andrew Mead '
+let name = '  Fetian Anas '
 
 // Length property
 console.log(name.length)

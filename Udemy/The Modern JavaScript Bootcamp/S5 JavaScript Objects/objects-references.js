@@ -1,7 +1,7 @@
 // The Modern JavaScript Bootcamp
 
 let myAccount = {
-    name: 'Andrew Mead',
+    name: 'Fetian Anas',
     expenses: 0,
     income: 0
 }

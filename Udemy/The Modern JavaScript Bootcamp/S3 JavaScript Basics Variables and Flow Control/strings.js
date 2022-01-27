@@ -1,7 +1,7 @@
 //The Modern JavaScript Bootcamp
 
-let city = 'Philadelphia'
-let country = 'United States'
+let city = 'Kafr Elsheikh'
+let country = 'Egypt'
 let location = city + ', ' + country
 
 console.log(location)

@@ -1,7 +1,7 @@
 // The Modern JavaScript Bootcamp
 
 const account = {
-    name: 'Andrew Mead',
+    name: 'Fetian Anas',
     expenses: [],
     income: [],
     addExpense: function (description, amount) {

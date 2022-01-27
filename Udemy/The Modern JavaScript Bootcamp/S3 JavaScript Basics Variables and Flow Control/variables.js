@@ -1,9 +1,9 @@
 // The Modern JavaScript Bootcamp
 
 // 1. You can't define a variable more than once
-let petName = 'Hal'
+let petName = 'Fet'
 
-petName = 'Spot'
+petName = 'Anas'
 
 console.log(petName)
 

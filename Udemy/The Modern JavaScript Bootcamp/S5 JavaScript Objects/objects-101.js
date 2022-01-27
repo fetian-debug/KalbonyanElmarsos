@@ -15,9 +15,9 @@ console.log(`${myBook.title} by ${myBook.author}`)
 // Challenge area
 
 let me = {
-    name: 'Andrew',
-    age: 27,
-    location: 'Philadelphia'
+    name: 'Fetian',
+    age: 22,
+    location: 'Egypt'
 }
 
 console.log(`${me.name} is ${me.age} and lives in ${me.location}.`)

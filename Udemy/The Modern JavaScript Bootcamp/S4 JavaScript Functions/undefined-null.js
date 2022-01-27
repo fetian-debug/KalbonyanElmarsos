@@ -3,7 +3,7 @@
 // Undefined for variable
 let name
 
-name = 'Jen'
+name = 'Fet'
 
 if (name === undefined) {
     console.log('Please provide a name')
@@ -21,7 +21,7 @@ let result = square()
 console.log(result)
 
 // Null as assined value
-let age = 27
+let age = 22
 
 age = null
 
