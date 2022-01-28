@@ -1,6 +1,4 @@
 // arguments object - no longer bound with arrow functions
-// osama zinhom saad
-// introduction - ES6
 
 const add = (a, b) => {
   // console.log(arguments);
@@ -11,8 +9,8 @@ console.log(add(55, 1, 1001));
 // this keyword - no longer bound
 
 const user = {
-  name: 'Andrew',
-  cities: ['Philadelphia', 'New York', 'Dublin'],
+  name: 'Fetian',
+  cities: ['Egypt', 'Sudan', 'Soudia'],
   printPlacesLived() {
     return this.cities.map((city) => this.name + ' has lived in ' + city);
   }

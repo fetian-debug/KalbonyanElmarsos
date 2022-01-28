@@ -1,6 +1,3 @@
-// osama zinhom saad
-// introduction - ES6
-
 // function square(x) {
 //   return x * x;
 // };
@@ -27,4 +24,4 @@
 
 const getFirstName = (fullName) => fullName.split(' ')[0];
 
-console.log(getFirstName('OSAMA ZINHOM'));
+console.log(getFirstName('Fetian Anas'));
