@@ -18,4 +18,4 @@
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`Cutting Edge JavaScript With Babel
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`Wrapping UP
 
-* [JavaScript Notes](https://github.com/fetian-debug/JS_story)
+* [JavaScript Summary](https://github.com/fetian-debug/JS_story)
