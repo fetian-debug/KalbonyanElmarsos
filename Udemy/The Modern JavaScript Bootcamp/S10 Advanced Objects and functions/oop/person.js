@@ -54,6 +54,6 @@ class Student extends Person {
     }
 }
 
-const me = new Employee('Andrew', 'Mead', 27, 'Teacher', [])
+const me = new Employee('Fetian', 'Anas', 22, 'Student', [])
 me.fullName = 'Clancey Turner'
 console.log(me.getBio())

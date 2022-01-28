@@ -3,6 +3,7 @@
 ## Expanding Our JavaScript Knowledge
 --------------------------------------
 
+## Projects
 
 * [Notes App](http://fetian-notes.surge.sh/)
 

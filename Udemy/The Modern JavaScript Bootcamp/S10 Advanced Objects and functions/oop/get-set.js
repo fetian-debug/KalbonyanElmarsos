@@ -10,6 +10,6 @@ const data = {
 }
 
 // code that uses the data object
-data.location = '  Philadelphia    '
-data.location = ' New York'
+data.location = '  Egypt  '
+data.location = ' Kafr Elsheikh'
 console.log(data)
