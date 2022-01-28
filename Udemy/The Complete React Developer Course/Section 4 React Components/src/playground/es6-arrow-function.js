@@ -14,7 +14,7 @@
 
 
 // Challenge - Use arrow functions
-// getFirstName('Mike Smith') -> "Mike"
+// getFirstName('Fetian Anas') -> "Fetian"
 // Create regular arrow function
 // Create arrow function using shorthand syntax
 
@@ -24,4 +24,4 @@
 
 const getFirstName = (fullName) => fullName.split(' ')[0];
 
-console.log(getFirstName('Andrew Mead'));
+console.log(getFirstName('Fetian Anas'));
