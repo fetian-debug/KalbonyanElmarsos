@@ -26,6 +26,7 @@
     "aws-cdk-lib": "2.7.0",
     "aws-sdk": "^2.1062.0",
     "create-serverless-stack": "^0.60.4",
+    "esbuild": "^0.14.14",
     "react-bootstrap": "1.6.1",
     "react-icons": "4.2.0",
     "sst": "^0.0.7",
