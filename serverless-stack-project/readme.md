@@ -1,1 +1,3 @@
-stoped here: https://serverless-stack.com/chapters/redirect-on-login.html
+## Scratch - A simple note taking app
+
+* Visit project: [Scratch](https://fetian.xyz/)
