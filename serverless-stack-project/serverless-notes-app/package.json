@@ -32,6 +32,7 @@
     "jest-cli": "22.4.4",
     "react-bootstrap": "1.6.1",
     "react-icons": "4.2.0",
+    "react-scripts": "^5.0.0",
     "sst": "^0.0.7",
     "stripe": "^8.199.0",
     "uuid": "7.0.3"
