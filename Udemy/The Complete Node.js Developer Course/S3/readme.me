@@ -1,1 +1,58 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+
+### Importing Node.js Core Modules
+
+```javascript
+const fs = require('fs')
+fs.writeFileSync('notes.txt', 'My name is Chester.')
+fs.appendFileSync('notes.txt', ' I live in Singapore.')
+```
+
+```console
+node app.js
+```
+
+### Importing Your Own Files
+
+[Introduction to CommonJS](https://flaviocopes.com/commonjs/)
+
+```javascript
+const getNotes = () => 'Your notes...'
+module.exports = getNotes 
+```
+
+```javascript
+const getNotes = require('./notes.js')
+const msg = getNotes()
+```
+### Importing npm Modules
+
+```console
+npm init -y
+npm i validator
+```
+
+```javascript
+const validator = require('validator')
+console.log(validator.isURL('https://mead.io/')) 
+
+
+### Printing in Color
+
+```console
+npm i chalk
+```
+
+```javascript
+const chalk = require('chalk')
+const greenMsg = chalk.green.inverse.bold('Success!')
+```
+
+### Global npm Modules and nodemon
+
+```console
+npm i -g nodemon
+nodemon app.js
+```
+
