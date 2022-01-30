@@ -1,1 +1,517 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+## File System and Command Line Args (Notes App)
+
+
+### Getting Input from Users
+
+```javascript
+const command = process.argv[2]
+if (command === 'add') {
+  console.log('Adding note!')
+} else if (command === 'remove') {
+  console.log('Removing note!')
+}
+```
+
+```console
+node app.js add
+```
+
+
+### Argument Parsing with Yargs
+
+```javascript
+const yargs = require('yargs')
+// Create add command
+yargs.command({
+  command: 'add',
+  describe: 'Add a new note',
+  builder: {
+    title: {
+      describe: 'Note title',
+      demandOption: true,
+      type: 'string'
+    },
+    body: {
+      describe: 'Note body',
+      demandOption: true,
+      type: 'string'
+    }
+  },
+  handler: function (argv) {
+    console.log('Title: ' + argv.title)
+    console.log('Body: ' + argv.body)
+  }
+})
+// Create remove command
+yargs.command({
+  command: 'remove',
+  describe: 'Remove a note',
+  handler: function () {
+      console.log('Removing the note')
+  }
+})
+// Create list command
+yargs.command({
+  command: 'list',
+  describe: 'List your notes',
+  handler: function () {
+      console.log('Listing out all notes')
+  }
+})
+// Create read command
+yargs.command({
+  command: 'read',
+  describe: 'Read a note',
+  handler: function () {
+      console.log('Reading a note')
+  }
+})
+module.exports = yargs 
+```
+
+```javascript
+const yargs = require('./yargs')
+console.log(yargs.argv)
+yargs.parse()
+```
+
+```console
+node app.js add
+node app.js remove
+node app.js list
+node app.js read
+node app.js add --title="My Note" --body="Interesting Lesson"
+```
+
+### Storing Data with JSON
+
+```javascript
+const book = {
+  title: 'Ego is the Enemy',
+  author: 'Ryan Holiday'
+}
+const bookJSON = JSON.stringify(book)
+const parseData = JSON.parse(bookJSON)
+```
+
+```json
+{
+  "title": "Ego is the Enemy",
+  "author": "Ryan Holiday"
+}
+```
+
+```javascript
+// const dataBuffer = fs.readFileSync('1-json.json')
+// const dataJSON = dataBuffer.toString()
+// const user = JSON.parse(dataJSON)
+const user = require('./1-json.json')
+user.name = 'Gunther'
+user.age = 54
+const userJSON = JSON.stringify(user, false, 2)
+fs.writeFileSync('1-json.json', userJSON)
+```
+
+```json
+{
+  "title": "Ego is the Enemy",
+  "author": "Ryan Holiday",
+  "name": "Gunther",
+  "age": 54
+}
+```
+
+### Adding a Note
+
+```javascript
+// app.js
+const yargs = require('yargs')
+const notes = require('./notes.js')
+// Create add command
+yargs.command({
+  command: 'add',
+  describe: 'Add a new note',
+  builder: {
+    title: {
+      describe: 'Note title',
+      demandOption: true,
+      type: 'string'
+    },
+    body: {
+      describe: 'Note body',
+      demandOption: true,
+      type: 'string'
+    }
+  },
+  handler: function (argv) {
+    notes.addNote(argv.title, argv.body)
+  }
+})
+// Create remove command
+yargs.command({
+  command: 'remove',
+  describe: 'Remove a note',
+  handler: function () {
+    console.log('Removing the note')
+  }
+})
+// Create list command
+yargs.command({
+  command: 'list',
+  describe: 'List your notes',
+  handler: function () {
+    console.log('Listing out all notes')
+  }
+})
+// Create read command
+yargs.command({
+  command: 'read',
+  describe: 'Read a note',
+  handler: function () {
+    console.log('Reading a note')
+  }
+})
+console.log(yargs.argv)
+yargs.parse()
+```
+
+```javascript
+// notes.js
+const fs = require('fs')
+const getNotes = () => 'Your notes...'
+const addNote = (title, body) => {
+  const notes = loadNotes()
+  const duplicateNotes = notes.filter(note => note.title === title)
+  if (duplicateNotes.length === 0) {
+    notes.push({
+        title: title,
+        body: body
+    })
+    saveNotes(notes)
+    console.log('New note added!')
+  } else {
+    console.log('Note title taken!')
+  }
+}
+const saveNotes = notes => {
+  const dataJSON = JSON.stringify(notes, false, 2)
+  fs.writeFileSync('notes.json', dataJSON)
+}
+const loadNotes = () => {
+  try {
+    return require('./notes.json')
+  } catch (e) {
+    return []
+  }
+}
+module.exports = {
+  getNotes: getNotes,
+  addNote: addNote
+}
+```
+
+```console
+node app.js add --title="Frontend 1" --body="React"
+node app.js add --title="Frontend 2" --body="Vue"
+node app.js add --title="Frontend 3" --body="Angular"
+```
+
+### Removing a Note
+
+```javascript
+// notes.js
+const chalk = require('chalk')
+...
+const removeNote = title => {
+  const notes = loadNotes()
+  const notesToKeep = notes.filter(function (note) {
+    return note.title !== title
+  })
+  if (notes.length > notesToKeep.length) {
+    console.log(chalk.green.inverse('Note removed!'))
+    saveNotes(notesToKeep)
+  } else {
+    console.log(chalk.red.inverse('No note found!'))
+  }    
+}
+module.exports = {
+  getNotes,
+  addNote,
+  removeNote
+}
+```
+
+```javascript
+// app.js
+const yargs = require('yargs')
+const notes = require('./notes.js')
+...
+// Create remove command
+yargs.command({
+  command: 'remove',
+  describe: 'Remove a note',
+  builder: {
+    title: {
+      describe: 'Note title',
+      demandOption: true,
+      type: 'string'
+    }
+  },
+  handler: function (argv) {
+    notes.removeNote(argv.title)
+  }
+})
+yargs.parse()
+```
+
+```console
+node app.js add --title="Frontend 1" --body="React"
+node app.js add --title="Frontend 2" --body="Vue"
+node app.js add --title="Frontend 3" --body="Angular"
+node app.js remove --title="Frontend 3"
+```
+
+
+### ES6 Aside: Arrow Functions
+
+```javascript
+const event = {
+  name: 'Birthday Party',
+  guestList: ['Andrew', 'Jen', 'Mike'],
+  printGuestList() {
+    console.log('Guest list for ' + this.name)
+    this.guestList.forEach((guest) => {
+      console.log(guest + ' is attending ' + this.name)
+    })
+  }
+}
+```
+
+```javascript
+//
+// Goal: Create method to get incomplete tasks
+//
+// 1. Define getTasksToDo method
+// 2. Use filter to to return just the incompleted tasks (arrow function)
+// 3. Test your work by running the script
+const tasks = {
+  tasks: [{
+    text: 'Grocery shopping',
+    completed: true
+  }, {
+    text: 'Clean yard',
+    completed: false
+  }, {
+    text: 'Film course',
+    completed: false
+  }],
+  getTasksToDo() {
+    return this.tasks.filter(task => task.completed === false)
+  }
+}
+tasks.getTasksToDo()
+```
+
+### Refactoring to Use Arrow Functions
+
+```javascript
+// app.js
+const yargs = require('yargs')
+const notes = require('./notes.js')
+// Create add command
+yargs.command({
+  command: 'add',
+  describe: 'Add a new note',
+  builder: {
+    title: {
+      describe: 'Note title',
+      demandOption: true,
+      type: 'string'
+    },
+    body: {
+      describe: 'Note body',
+      demandOption: true,
+      type: 'string'
+    }
+  },
+  handler(argv) {
+    notes.addNote(argv.title, argv.body)
+  }
+})
+// Create remove command
+yargs.command({
+  command: 'remove',
+  describe: 'Remove a note',
+  builder: {
+    title: {
+      describe: 'Note title',
+      demandOption: true,
+      type: 'string'
+    }
+  },
+  handler(argv) {
+    notes.removeNote(argv.title)
+  }
+})
+// Create list command
+yargs.command({
+  command: 'list',
+  describe: 'List your notes',
+  handler() {
+    console.log('Listing out all notes')
+  }
+})
+// Create read command
+yargs.command({
+  command: 'read',
+  describe: 'Read a note',
+  handler() {
+    console.log('Reading a note')
+  }
+})
+console.log(yargs.argv)
+yargs.parse()
+```
+
+```javascript
+// notes.js
+const fs = require('fs')
+const chalk = require('chalk')
+const getNotes = () => 'Your notes...'
+const addNote = (title, body) => {
+  const notes = loadNotes()
+  const duplicateNotes = notes.filter(note => note.title === title)
+  if (duplicateNotes.length === 0) {
+    notes.push({
+      title: title,
+      body: body
+    })
+    saveNotes(notes)
+    console.log(chalk.green.inverse('New note added!'))
+  } else {
+    console.log(chalk.red.inverse('Note title taken!'))
+  }
+}
+const removeNote = title => {
+  const notes = loadNotes()
+  const notesToKeep = notes.filter(note => note.title !== title)
+  if (notes.length > notesToKeep.length) {
+    console.log(chalk.green.inverse('Note removed!'))
+    saveNotes(notesToKeep)
+  } else {
+    console.log(chalk.red.inverse('No note found!'))
+  }    
+}
+const saveNotes = notes => {
+  const dataJSON = JSON.stringify(notes, false, 2)
+  fs.writeFileSync('notes.json', dataJSON)
+}
+const loadNotes = () => {
+  try {
+    return require('./notes.json')
+  } catch (e) {
+    return []
+  }
+}
+module.exports = {
+  getNotes,
+  addNote,
+  removeNote
+}
+```
+
+```console
+node app.js add --title="Frontend 1" --body="React"
+node app.js add --title="Frontend 2" --body="Vue"
+node app.js add --title="Frontend 3" --body="Angular"
+node app.js remove --title="Frontend 3"
+```
+
+## Listing Notes
+
+```javascript
+// notes.js
+const fs = require('fs')
+const chalk = require('chalk')
+...
+const listNotes = () => {
+  const notes = loadNotes()
+  console.log(chalk.inverse('Your notes'))
+  notes.forEach(note => console.log(note.title))
+}
+module.exports = {
+  getNotes,
+  addNote,
+  removeNote,
+  listNotes
+}
+```
+
+```javascript
+// app.js
+...
+// Create list command
+yargs.command({
+  command: 'list',
+  describe: 'List your notes',
+  handler() {
+    notes.listNotes()
+  }
+})
+yargs.parse()
+```
+
+```console
+node app.js list
+```
+
+
+### Reading a Note
+
+```javascript
+// app.js
+...
+// Create read command
+yargs.command({
+  command: 'read',
+  describe: 'Read a note',
+  builder: {
+    title: {
+      describe: 'Note title',
+      demandOption: true,
+      type: 'string'
+    }
+  },
+  handler(argv) {
+    notes.readNote(argv.title)
+  }
+})
+yargs.parse()
+```
+
+```javascript
+// notes.js
+const readNote = title => {
+  const notes = loadNotes()
+  const note = notes.find((note) => note.title === title)
+  if (note) {
+    console.log(chalk.inverse(note.title))
+    console.log(note.body)
+  } else {
+    console.log(chalk.red.inverse('Note not found!'))
+  }
+}
+module.exports = {
+  getNotes,
+  addNote,
+  removeNote,
+  listNotes,
+  readNote
+}
+```
+
+```console
+node app.js read --title="Frontend 3"
+```
