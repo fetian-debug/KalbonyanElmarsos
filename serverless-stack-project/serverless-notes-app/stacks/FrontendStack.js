@@ -10,7 +10,10 @@ export default class FrontendStack extends sst.Stack {
     const site = new sst.ReactStaticSite(this, "ReactSite", {
       customDomain:
            scope.stage === "prod"
-    ? "fetian.xyz"
+    ? {
+        domainName: "fetian.xyz",
+        domainAlias: "www.fetian.xyz",
+      }
     : undefined,
       path: "frontend",
       // Pass in our environment variables
