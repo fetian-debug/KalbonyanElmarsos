@@ -1,1 +1,36 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+
+## Setting up Your Machine
+
+1. Inatalling Visual Studio Code [VScode](https://code.visualstudio.com/download)
+
+- This is text editor that we will be using to write code.
+
+2. Installing Node.js [Nodejs](https://nodejs.org/en/download/)
+
+- This is going to allow us to run JavaScript files on your machine.
+
+## Importing Node.js Core Modules
+
+* Node.js comes with dozens of built-in modules. These built-in modules, sometimes
+referred to as core modules, give you access to tools for working with the file system,
+making http requests, creating web servers, and more! In this lesson, you’ll learn how to load in those core modules and use them in your code.
+
+* Importing Node.js Core Modules
+
+To get started, let’s work with some built-in Node.js modules. These are modules that
+come with Node, so there’s no need to install them.
+
+* The module system is built around the require function. This function is used to load in a
+module and get access to its contents. require is a global variable provided to all your
+Node.js scripts, so you can use it anywhere you like!
+Let’s look at an example.
+
+```nodejs
+const fs = require('fs')
+fs.writeFileSync('notes.txt', 'I live in Egypt')
+```
+* The script above uses require to load in the fs module. This is a built-in Node.js module that provides functions you can use to manipulate the file system. The script uses writeFileSync to write a message to notes.txt.
+
+- After you run the script, you’ll notice a new notes.txt file in your directory. Open it up and you’ll see, “I live in Egypt”.
