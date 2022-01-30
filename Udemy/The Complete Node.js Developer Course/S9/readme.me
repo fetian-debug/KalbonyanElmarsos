@@ -1,1 +1,142 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+## Application Deployment (Weather App)
+
+### Joining Heroku
+
+[Heroku: Cloud Application Platform](https://www.heroku.com/)
+
+```console
+heroku -v
+heroku login
+heroku logs
+```
+
+
+
+### Exploring Git
+
+Version Control with Git
+
+| Untracked Files | Unstaged Changes | Staged Changes | Commits |
+| --------------- | ---------------- | -------------- | ------- |
+| src/app.js      |                  |                |         |
+| readme.md       |                  |                |         |
+
+add command
+
+| Untracked Files | Unstaged Changes | Staged Changes | Commits |
+| --------------- | ---------------- | -------------- | ------- |
+| readme.md       |                  | src/app.js     |         |
+
+commit
+
+| Untracked Files | Unstaged Changes | Staged Changes | Commits |
+| --------------- | ---------------- | -------------- | ------- |
+| readme.md       |                  |                |         |
+|                 |                  |                | 1ab49   |
+
+add new file geocode.js
+modify src/app.js
+
+| Untracked Files      | Unstaged Changes | Staged Changes | Commits |
+| -------------------- | ---------------- | -------------- | ------- |
+| readme.md            | src/app.js       |                |         |
+| src/utils/geocode.js |                  |                |         |
+|                      |                  |                | 1ab49   |
+
+add command
+
+| Untracked Files | Unstaged Changes | Staged Changes       | Commits |
+| --------------- | ---------------- | -------------------- | ------- |
+| readme.md       |                  | src/app.js           |         |
+|                 |                  | src/utils/geocode.js |         |
+|                 |                  |                      | 1ab49   |
+
+commit
+
+| Untracked Files | Unstaged Changes | Staged Changes | Commits |
+| --------------- | ---------------- | -------------- | ------- |
+| readme.md       |                  |                |         |
+|                 |                  |                | e9f21   |
+|                 |                  |                | 1ab49   |
+
+
+
+### Setting up SSH Keys
+
+```console
+<!-- check for rsa key pairs -->
+ls -a -l ~/.ssh
+
+<!-- create new rsa key pairs with comment -->
+ssh-keygen -t rsa -b 4096 -C "xxx@gmail.com"
+
+<!-- list newly created rsa key pairs  -->
+ls -a -l ~/.ssh
+-rw-------    1 xxx  staff  3389 Jun 11 18:21 id_rsa
+-rw-r--r--    1 xxx  staff   748 Jun 11 18:21 id_rsa.pub
+
+<!-- check SSH authentication agent id -->
+<!-- make sure ssh is running   -->
+eval "$(ssh-agent -s)"
+
+<!-- adding SSH private keys into the SSH authentication agent -->
+ssh-add -K ~/.ssh/id_rsa
+```
+
+
+
+### Deploying Node.js to Heroku
+
+```console
+<!-- add id_rsa keys to heroku -->
+heroku keys:add
+
+<!-- create new heroku app from web-server directory -->
+heroku create chester-weather-app
+```
+
+https://chester-weather-app.herokuapp.com/
+https://git.heroku.com/chester-weather-app.git
+
+```json
+// package.json
+{
+  "name": "web-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  ...
+  }
+}
+```
+
+```javascript
+// src/app.js
+...
+const port = process.env.PORT || 3000
+...
+app.listen(port, () => console.log(`Server is up on port ${port}.`))
+```
+
+```javascript
+// public/js/app.js
+  fetch(`/weather?address=${location}`)
+    ...
+})
+```
+
+```console
+git init
+heroku git:remote -a chester-weather-app
+git add .
+git commit -m "weather-app"
+git push heroku master
+```
+
+[Configuration and Config Vars](https://devcenter.heroku.com/articles/config-vars)
+

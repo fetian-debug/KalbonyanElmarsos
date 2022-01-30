@@ -1,1 +1,73 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+
+## Asynchronous Node.js (Weather App)
+
+
+- Asynchronous
+- Non-blocking
+- Single Threaded
+- Event Driven
+
+### Asynchronous Basics
+
+```javascript
+console.log('Starting')
+setTimeout(() => console.log('2 Second Timer'), 2000)
+setTimeout(() => console.log('0 Second Timer'), 0)
+console.log('Stopping')
+```
+
+Starting
+Stopping
+0 Second Timer
+2 Second Timer
+
+### Call Stack, Callback Queue, and Event Loop
+
+
+### Making HTTP Requests
+
+- [request](https://github.com/request/request)
+- [postman-request](https://github.com/postmanlabs/postman-request#readme)
+- [weatherstack](https://weatherstack.com/documentation)
+
+```javascript
+require('dotenv').config()
+const request = require('request')
+const country = "Singapore"
+const url = `http://api.weatherstack.com/current?access_key=${process.env.ACCESS_KEY}&query=${country}`
+request({ url: url }, (error, response) => {
+  const data = JSON.parse(response.body)
+  console.log(data.current)
+})
+```
+
+### Customizing HTTP Requests
+
+[mapbox](https://www.mapbox.com/)
+
+```javascript
+require('dotenv').config()
+const request = require('request')
+const accessKey = process.env.WEATHER_STACK_ACCESS_KEY
+const country = "Singapore"
+const url = `http://api.weatherstack.com/current?access_key=${accessKey}&query=${country}`
+request({ url: url, json: true }, (error, response) => {
+  console.log(`${response.body.current.weather_descriptions[0]} It is currently ${response.body.current.temperature} degress out. There is a ${response.body.current.precip * 100}% chance of rain.`)
+})
+```
+
+```javascript
+require('dotenv').config()
+const request = require('request')
+// Geocoding
+// Address -> Lat/Long -> Weather
+const accessToken = process.env.MAPBOX_ACCESS_TOKEN
+const geocodeURL = `https://api.mapbox.com/geocoding/v5/mapbox.places/${country}.json?access_token=${accessToken}`
+request({ url: geocodeURL, json: true }, (error, response) => {
+  const latitude = response.body.features[0].center[0]
+  const longitude = response.body.features[0].center[1]
+  console.log(latitude, longitude)
+}) 
+```
