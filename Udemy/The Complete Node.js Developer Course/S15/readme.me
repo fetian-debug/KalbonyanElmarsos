@@ -1,1 +1,112 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+
+## Sending Emails (Task App)
+
+### Exploring SendGrid
+
+- [SendGrid](https://sendgrid.com/)
+- [Single Sender Verification](https://sendgrid.com/docs/ui/sending-email/sender-verification/)
+- [Integrate](https://app.sendgrid.com/guide/integrate)
+- [sendgrid-nodejs](https://github.com/sendgrid/sendgrid-nodejs)
+- [Activity Feed](https://app.sendgrid.com/email_activity)
+
+```javascript
+require('dotenv').config()
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+sgMail.send({
+    to: process.env.RECEIVER_EMAIL,
+    from: process.env.SENDER_EMAIL,
+    subject: 'This is my first creation!',
+    text: 'I hope this one actually get to you.'
+}) 
+```
+
+
+
+### Sending Welcome and Cancelation Emails
+
+```javascript
+require('dotenv').config()
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+const sendWelcomeEmail = (email, name) => {
+  sgMail.send({
+    to: email,
+    from: process.env.SENDER_EMAIL,
+    subject: 'Thanks for joining in!',
+    text: `Welcome to the app, ${name}. Let me know how you get along with the app.`
+  }) 
+}
+const sendCancelationEmail = (email, name) => {
+  sgMail.send({
+    to: email,
+    from: process.env.SENDER_EMAIL,
+    subject: 'Sorry to see you go!',
+    text: `Goodbye, ${name}. I hope to see you back sometime soon.`
+  })
+}
+module.exports = {
+  sendWelcomeEmail,
+  sendCancelationEmail
+}
+```
+
+```javascript
+const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account')
+router.post('/users', async (req, res) => {
+  const user = new User(req.body)
+  try {
+    await user.save()
+    sendWelcomeEmail(user.email, user.name)
+    const token = await user.generateAuthToken()
+    res.status(201).send({ user, token })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+router.delete('/users/me', auth, async (req, res) => {
+  try {
+    await req.user.remove()
+    sendCancelationEmail(req.user.email, req.user.name)
+    res.send(req.user)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+
+
+### Environment Variables
+
+- [Managing environment variables in Nodejs and Modern JS apps](https://medium.com/dubizzletechblog/managing-environment-variables-in-nodejs-and-modern-js-apps-608003f4686c)
+- [dotenv](https://github.com/motdotla/dotenv)
+- [env-cmd](https://www.npmjs.com/package/env-cmd)
+- task-manager/config/dev.env
+
+```json
+{
+  ...
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js"
+  },
+  ...
+}
+```
+
+### Creating a Production MongoDB Database
+
+[MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+[Connect via Compass](https://docs.atlas.mongodb.com/compass-connection/)
+
+Create a new Cluster
+
+- Cloud Provider & Region: AWS, Singapore (ap-southeast-1)
+
+Cluster0
+
+- Click CONNECT
+

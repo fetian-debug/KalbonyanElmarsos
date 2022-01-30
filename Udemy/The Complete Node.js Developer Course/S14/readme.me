@@ -1,1 +1,187 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+14: File Uploads (Task App)**
+
+### Adding Support for File Uploads
+
+[multer](https://github.com/expressjs/multer)
+[Course Images](http://links.mead.io/files)
+
+```javascript
+const multer = require('multer')
+const upload = multer({
+  dest: 'avatars'
+})
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+  res.send()
+})
+```
+
+![](post-avatar.jpg)
+
+
+
+### Validating File Uploads
+
+```javascript
+const multer = require('multer')
+const upload = multer({
+  dest: 'images',
+  limits: {
+    fileSize: 1000000 // 1 MB
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(doc|docx)$/)) {
+        return cb(new Error('Please upload a Word document'))
+    }
+    cb(undefined, true)
+  }
+})
+app.post('/upload', upload.single('upload'), (req, res) => {
+  res.send()
+})
+```
+
+
+
+### Validation Challenge
+
+```javascript
+const upload = multer({
+  dest: 'avatars',
+  limits: {
+    fileSize: 1000000
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+        return cb(new Error('Please upload an image'))
+    }
+    cb(undefined, true)
+  }
+})
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+  res.send()
+})
+```
+
+
+
+### Handling Express Errors
+
+```javascript
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+  res.send()
+}, (error, req, res, next) => {
+  res.status(400).send({ error: error.message })
+})
+```
+
+
+
+### Adding Images to User Profile
+
+```javascript
+const userSchema = new mongoose.Schema({
+  name: { ... },
+  email: { ... },
+  password: { ... },
+  age: { ... },
+  tokens: [ ... ],
+  avatar: {
+    type: Buffer
+  }
+}, {
+  timestamps: true
+})
+```
+
+```javascript
+router.post('/users/me/avatar', auth, 
+  upload.single('avatar'), async (req, res) => {
+  req.user.avatar = req.file.buffer
+  await req.user.save()
+  res.send()
+}, (error, req, res, next) => {
+  res.status(400).send({ error: error.message })
+})
+router.delete('/users/me/avatar', auth, async (req, res) => {
+  req.user.avatar = undefined
+  await req.user.save()
+  res.send()
+})
+```
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+  <h1>Image</h1>
+  <!-- copy binary data from avatar field in user -->
+  <!-- add data after base64 -->
+  <img src="data:image/jpg;base64,/9j/4AAQSkZJRgABAQAASA...">
+</body>
+</html>
+```
+
+### Serving up Files
+
+```javascript
+router.get('/users/:id/avatar', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user || !user.avatar) {
+      throw new Error()
+    }
+    res.set('Content-Type', 'image/jpg')
+    res.send(user.avatar)
+  } catch (e) {
+    res.status(404).send()
+  }
+})
+```
+
+
+
+### Auto-Cropping and Image Formatting
+
+[sharp](https://github.com/lovell/sharp)
+
+```javascript
+const sharp = require('sharp')
+router.post('/users/me/avatar', auth, 
+  upload.single('avatar'), async (req, res) => {
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
+    req.user.avatar = buffer
+    await req.user.save()
+    res.send()
+  }, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
+})
+router.get('/users/:id/avatar', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user || !user.avatar) {
+      throw new Error()
+    }
+    res.set('Content-Type', 'image/png')
+    res.send(user.avatar)
+  } catch (e) {
+    res.status(404).send()
+  }
+})
+userSchema.methods.toJSON = function () {
+  const user = this
+  const userObject = user.toObject()
+  delete userObject.password
+  delete userObject.tokens
+  delete userObject.avatar
+  return userObject
+}
+```
+
+
