@@ -1,2 +1,4 @@
 before_build:
   - cd frontend && npm install
+before_compile​: 
+  - ​n 14.18.3
