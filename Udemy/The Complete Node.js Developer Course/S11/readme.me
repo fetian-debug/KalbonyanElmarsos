@@ -1,1 +1,451 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+## REST APIs and Mongoose (Task App)
+
+### Setting up Mongoose
+
+```javascript
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true
+})
+const User = mongoose.model('User', {
+  name: {
+    type: String
+  },
+  age: {
+    type: Number
+  }
+})
+const me = new User({
+  name: 'Andrew',
+  age: 27
+})
+me.save().then(() => {
+  console.log(me)
+}).catch((error) => {
+  console.log('Error!', error)
+}) 
+```
+
+
+### Creating a Mongoose Model
+
+```javascript
+const Task = mongoose.model('Task', {
+  description: { type: String },
+  completed: { type: Boolean }
+})
+const task = new Task({
+  description: 'Learn the Mongoose library',
+  completed: false
+})
+task
+  .save()
+  .then(() => console.log(task))
+  .catch((error) => console.log('Error!', error)) 
+```
+
+
+### Data Validation and Sanitization
+
+[validator.js](https://github.com/validatorjs/validator.js)
+
+```javascript
+// src/models/user.js
+const mongoose = require('mongoose')
+const validator = require('validator')
+const User = mongoose.model('User', {
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+          throw new Error('Email is invalid')
+      }
+    }
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 7,
+    trim: true,
+    validate(value) {
+      if (value.toLowerCase().includes('password')) {
+          throw new Error('Password cannot contain "password"')
+      }
+    }
+  },
+  age: {
+    type: Number,
+    default: 0,
+    validate(value) {
+      if (value < 0) {
+          throw new Error('Age must be a postive number')
+      }
+    }
+  }
+})
+module.exports = User
+```
+
+```javascript
+// src/models/task.js
+const mongoose = require('mongoose')
+const Task = mongoose.model('Task', {
+    description: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    completed: {
+        type: Boolean,
+        default: false
+    }
+})
+module.exports = Task
+```
+
+### Structuring a REST API
+
+REST API or RESTful API
+
+- REST API: allows clients to access and manipulate resources using a set of predefined operations
+  - resource: a user or a task
+  - predefined operation
+    - create a new task
+    - mark a task as complete
+- REST: Representational State Transfer
+  - Representational of resource
+  - State Transfer: stateless 
+    - transfer from server to the client)
+- API: Application Programming Interface
+  - a set of tools to build application
+
+Task Resource
+
+- Create: POST /tasks
+- Read: GET /tasks
+- Read: GET /tasks/:id
+- Update: PATCH /tasks/:id
+- Delete: DELETE /tasks/:id
+
+Request
+
+- POST /tasks HTTP/1.1
+- Accept: application/json
+- Connection: Keep-Alive
+- Authorization: Bearer ey...
+- { "descroption": "Learn Node JS" }
+
+Response
+
+- HTTP/1.1 201 Created
+- Date: Sun, 28 Jul 2020 15:37:37 GMT
+- Server: Express
+- Content-Type: application/json
+- { "_id": "...", "descroption": "Learn Node JS" }
+
+
+### Resource Creation Endpoints
+
+```javascript
+// src/index.js
+const express = require('express')
+require('./db/mongoose')
+const User = require('./models/user')
+const Task = require('./models/task')
+const app = express()
+const port = process.env.PORT || 3000
+app.use(express.json())
+app.post('/users', (req, res) => {
+  const user = new User(req.body)
+  user
+    .save()
+    .then(() => res.status(201).send(user))
+    .catch(error => res.status(400).send(error))
+})
+app.post('/tasks', (req, res) => {
+  const task = new Task(req.body)
+  task
+    .save()
+    .then(() => res.status(201).send(task))
+    .catch(error => res.status(400).send(error))
+})
+app.listen(port, () => console.log(`Server is up on port ${port}`))
+```
+
+
+
+### Resource Reading Endpoints
+
+```javascript
+app.get('/users', (req, res) => {
+  User
+    .find({})
+    .then(users => res.send(users))
+    .catch(error => res.status(500).send())
+})
+app.get('/users/:id', (req, res) => {
+  const _id = req.params.id
+  User
+    .findById(_id)
+    .then(user => {
+      if (!user) {
+        return res.status(404).send()
+      }
+      res.send(user)
+    })
+    .catch(error => res.status(500).send())
+})
+app.get('/tasks', (req, res) => {
+  Task
+    .find({})
+    .then(tasks => res.send(tasks))
+    .catch(error => res.status(500).send())
+})
+app.get('/tasks/:id', (req, res) => {
+  const _id = req.params.id
+  Task
+    .findById(_id)
+    .then(task => {
+      if (!task) {
+        return res.status(404).send()
+      }
+      res.send(task)
+    })
+    .catch(error => res.status(500).send())
+})
+```
+
+
+
+### Promise Chaining
+
+```javascript
+const add = (a, b) => {
+  new Promise((resolve, reject) => {
+    setTimeout(() => resolve(a + b), 2000)
+  })
+}
+add(1, 1)
+  .then(sum => add(sum, 4))
+  .then((sum2) => console.log(sum2))
+  .catch(error => console.log(error))
+```
+
+### Async/Await
+
+```javascript
+const add = (a, b) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (a < 0 || b < 0) {
+        return reject('Numbers must be non-negative')
+      }
+      resolve(a + b)
+    }, 2000)
+  })
+}
+const doWork = async () => {
+  const sum = await add(1, -99)
+  const sum2 = await add(sum, 50)
+  const sum3 = await add(sum2, -3)
+  return sum3
+}
+doWork()
+  .then(result => console.log('result', result))
+  .catch(error => console.log('error', error))
+```
+
+
+### Integrating Async/Await
+
+```javascript
+app.post('/users', async (req, res) => {
+  const user = new User(req.body)
+  try {
+    await user.save()
+    res.status(201).send(user)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+app.get('/users', async(req, res) => {
+  try {
+    const users = await User.find({})
+    res.send(users)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+app.get('/users/:id', (req, res) => {
+  const _id = req.params.id
+  try {
+    const user = await User.findById(_id)
+    if (!user) {
+        return res.status(404).send()
+    }
+    res.send(user)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+app.post('/tasks', (req, res) => {
+  const task = new Task(req.body)
+  try {
+    task.save()
+    res.status(201).send(task)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+app.get('/tasks', (req, res) => {
+  try {
+    const tasks = Task.find({})
+    res.send(tasks)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+app.get('/tasks/:id', (req, res) => {
+  const _id = req.params.id
+  try {
+    const task = Task.findById(_id)
+    if (!task) {
+        return res.status(404).send()
+    }
+    res.send(task)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+
+### Resource Updating Endpoints
+
+```javascript
+app.patch('/users/:id', async (req, res) => {
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['name', 'email', 'password', 'age']
+  const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'Invalid updates!' })
+  }
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+    if (!user) {
+      return res.status(404).send()
+    }
+    res.send(user)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+app.patch('/tasks/:id', async (req, res) => {
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['description', 'completed']
+  const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'Invalid updates!' })
+  }
+  try {
+    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
+    if (!task) {
+      return res.status(404).send()
+    }
+    res.send(task)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+```
+
+
+### Resource Deleting Endpoints
+
+```javascript
+app.delete('/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id)
+    if (!user) {
+      return res.status(404).send()
+    }
+    res.send(user)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+app.delete('/tasks/:id', async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id)
+    if (!task) {
+      res.status(404).send()
+    }
+    res.send(task)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+
+### Separate Route Files
+
+task-manager
+
+- src
+  - db
+  - models
+  - routers
+
+```javascript
+// src/index.js
+const express = require('express')
+require('./db/mongoose')
+const userRouter = require('./routers/user')
+const taskRouter = require('./routers/task')
+const app = express()
+const port = process.env.PORT || 3000
+app.use(express.json())
+app.use(userRouter)
+app.use(taskRouter)
+app.listen(port, () => console.log(`Server is up on port ${port}`))
+```
+
+```javascript
+// src/routers/task.js
+const express = require('express')
+const Task = require('../models/task')
+const router = new express.Router()
+router.post('/tasks', async (req, res) => { ... })
+router.get('/tasks', async (req, res) => { ... })
+router.get('/tasks/:id', async (req, res) => { ... })
+router.patch('/tasks/:id', async (req, res) => { ... })
+router.delete('/tasks/:id', async (req, res) => { ... })
+module.exports = router
+```
+
+```javascript
+// src/routers/user.js
+const express = require('express')
+const User = require('../models/user')
+const router = new express.Router()
+router.post('/users', async (req, res) => { ... })
+router.get('/users', async (req, res) => { ... })
+router.get('/users/:id', async (req, res) => { ... })
+router.patch('/users/:id', async (req, res) => { ... })
+router.delete('/users/:id', async (req, res) => { ... })
+module.exports = router
+```
+

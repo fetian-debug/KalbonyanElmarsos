@@ -1,1 +1,116 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+Sorting, Pagination, and Filtering (Task App)
+
+### Working with Timestamps
+
+
+```javascript
+const mongoose = require('mongoose')
+const validator = require('validator')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const Task = require('./task')
+const userSchema = new mongoose.Schema({
+  ...
+}, {
+  timestamps: true
+})
+const User = mongoose.model('User', userSchema)
+module.exports = User
+```
+
+```javascript
+const mongoose = require('mongoose')
+const taskSchema = new mongoose.Schema({ 
+  ...
+}, {
+  timestamps: true
+})
+const Task = mongoose.model('Task', taskSchema)
+module.exports = Task
+```
+
+### Filtering Data
+
+```javascript
+// GET /tasks?completed=true
+// GET /tasks?completed=false
+router.get('/tasks', auth, async (req, res) => {
+  const match = {}
+  if (req.query.completed) {
+    match.completed = req.query.completed === 'true'
+  }
+  try {
+    await req.user.populate({
+      path: 'tasks',
+      match
+    }).execPopulate()
+    res.send(req.user.tasks)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+
+### Paginating Data
+
+```javascript
+// limit: number of records
+// skip: record id to skip, start from 0
+// GET /tasks?limit=10&skip=20
+router.get('/tasks', auth, async (req, res) => {
+  const match = {}
+  if (req.query.completed) {
+    match.completed = req.query.completed === 'true'
+  }
+  try {
+    await req.user.populate({
+      path: 'tasks',
+      match,
+      options: {
+        limit: parseInt(req.query.limit),
+        skip: parseInt(req.query.skip)
+    }
+    }).execPopulate()
+    res.send(req.user.tasks)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+
+### Sorting Data
+
+```javascript
+// GET /tasks?sortBy=createdAt:desc
+router.get('/tasks', auth, async (req, res) => {
+  const match = {}
+  const sort = {}
+  if (req.query.completed) {
+    match.completed = req.query.completed === 'true'
+  }
+  if (req.query.sortBy) {
+    const parts = req.query.sortBy.split(':')
+    sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+  }
+  try {
+    await req.user.populate({
+      path: 'tasks',
+      match,
+      options: {
+        limit: parseInt(req.query.limit),
+        skip: parseInt(req.query.skip),
+        sort
+    }
+    }).execPopulate()
+    res.send(req.user.tasks)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+

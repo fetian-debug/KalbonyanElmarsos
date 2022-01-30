@@ -1,1 +1,508 @@
-The Complete Node.js Developer Course (3rd Edition)
+## The Complete Node.js Developer Course (3rd Edition)
+
+
+API Authentication and Security (Task App)
+
+### Securely Storing Passwords
+
+```javascript
+const bcrypt = require('bcryptjs')
+const myFunction = async () => {
+  const password = 'Red12345!'
+  const hashedPassword = await bcrypt.hash(password, 8)
+  console.log(password)
+  console.log(hashedPassword)
+  const isMatch = await bcrypt.compare('red12345!', hashedPassword)
+  console.log(isMatch)
+}
+myFunction()
+```
+
+```javascript
+// src/models/user.js
+const mongoose = require('mongoose')
+const validator = require('validator')
+const bcrypt = require('bcryptjs')
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error('Email is invalid')
+      }
+    }
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 7,
+    trim: true,
+    validate(value) {
+      if (value.toLowerCase().includes('password')) {
+        throw new Error('Password cannot contain "password"')
+      }
+    }
+  },
+  age: {
+    type: Number,
+    default: 0,
+    validate(value) {
+      if (value < 0) {
+        throw new Error('Age must be a postive number')
+      }
+    }
+  }
+})
+// Hash the plain text password before saving
+userSchema.pre('save', async function (next) {
+  const user = this
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8)
+  }
+  next()
+})
+const User = mongoose.model('User', userSchema)
+module.exports = User
+```
+
+```javascript
+router.patch('/users/:id', async (req, res) => {
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['name', 'email', 'password', 'age']
+  const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'Invalid updates!' })
+  }
+  try {
+    const user = await User.findById(req.params.id)
+    updates.forEach(update => user[update] = req.body[update])
+    await user.save()
+    if (!user) {
+      return res.status(404).send()
+    }
+    res.send(user)
+  } catch (e) {
+    res.status(400).send(e)
+  }
+})
+```
+
+
+### Logging in Users
+
+```javascript
+// src/models/user.js
+userSchema.statics.findByCredentials = async (email, password) => {
+  const user = await User.findOne({ email })
+  if (!user) {
+    throw new Error('Unable to login')
+  }
+  const isMatch = await bcrypt.compare(password, user.password)
+  if (!isMatch) {
+    throw new Error('Unable to login')
+  }
+  return user
+}
+```
+
+```javascript
+// src/routers/user.js
+router.post('/users/login', async (req, res) => {
+  try {
+    const user = await User.findByCredentials(req.body.email, req.body.password)
+    res.send(user)
+  } catch (e) {
+    res.status(400).send()
+  }
+})
+```
+
+
+### JSON Web Tokens
+
+```javascript
+const jwt = require('jsonwebtoken')
+const myFunction = async () => {
+  const token = jwt.sign({ _id: 'abc123' }, 'thisismynewcourse', { expiresIn: '7 days' })
+  
+  const data = jwt.verify(token, 'thisismynewcourse')
+}
+myFunction()
+```
+
+
+### Generating Authentication Tokens
+
+```javascript
+// src/models/user.js
+const userSchema = new mongoose.Schema({
+  name: { ... },
+  email: { ... },
+  password: { ... },
+  age: { ... },
+  tokens: [{
+    token: {
+        type: String,
+        required: true
+    }
+  }]
+})
+userSchema.methods.generateAuthToken = async function () {
+  const user = this
+  const token = jwt.sign({ _id: user._id.toString() }, 'thisismynewcourse')
+  user.tokens = user.tokens.concat({ token })
+  await user.save()
+  return token
+}
+```
+
+```javascript
+// src/routers/user.js
+router.post('/users', async (req, res) => {
+  const user = new User(req.body)
+  try {
+    await user.save()
+    const token = await user.generateAuthToken()
+    res.status(201).send({ user, token })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+router.post('/users/login', async (req, res) => {
+  try {
+    const user = await User.findByCredentials(req.body.email, req.body.password)
+    const token = await user.generateAuthToken()
+    res.send({ user, token })
+  } catch (error) {
+    res.status(400).send()
+  }
+})
+```
+
+
+### Express Middleware
+
+- without middleware: new request -> run route handler
+- with middleware: new request -> do something -> run route handler
+
+```javascript
+app.use((req, res, next) => {
+  if (req.method === 'GET') {
+    res.send('GET requests are disabled')
+  } else {
+    next()
+  }
+})
+```
+
+```javascript
+app.use((req, res, next) => {
+  res.status(503).send('Site is currently down. Check back soon!')
+})
+```
+
+
+### Accepting Authentication Tokens
+
+Authorization: <type> <token>
+
+```javascript
+// src/middleware/auth.js
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
+const auth = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization').replace('Bearer ', '')
+    const decoded = jwt.verify(token, 'thisismynewcourse')
+    const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
+    if (!user) {
+      throw new Error()
+    }
+    req.user = user
+    next()
+  } catch (error) {
+    res.status(401).send({ error: 'Please authenticate.' })
+  }
+}
+module.exports = auth
+```
+
+```javascript
+router.get('/users/me', auth, async (req, res) => {
+  res.send(req.user)
+})
+```
+
+
+### Advanced Postman
+
+[Managing environments](https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/)
+
+![](postman-environment.jpg)
+
+
+```javascript
+// Login User - Tests
+if (pm.response.code === 200) {
+    pm.environment.set('authToken',pm.response.json().token)
+}
+// Create User - Tests
+if (pm.response.code === 201) {
+    pm.environment.set('authToken',pm.response.json().token)
+}
+```
+
+### Logging Out
+
+```javascript
+router.post('/users/logout', auth, async (req, res) => {
+  try {
+    req.user.tokens = 
+      req.user.tokens.filter(token => token.token !== req.token)
+    await req.user.save()
+    res.send()
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+router.post('/users/logoutAll', auth, async (req, res) => {
+  try {
+    req.user.tokens = []
+    await req.user.save()
+    res.send()
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+```javascript
+const jwt = require('jsonwebtoken')
+const User = require('../models/user')
+const auth = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization').replace('Bearer ', '')
+    const decoded = jwt.verify(token, 'thisismynewcourse')
+    const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
+    if (!user) {
+      throw new Error()
+    }
+    
+    req.token = token
+    req.user = user
+    next()
+  } catch (error) {
+    res.status(401).send({ error: 'Please authenticate.' })
+  }
+}
+module.exports = auth
+```
+
+
+### Hiding Private Data
+
+```javascript
+const user = {
+  name: "Freddie Phillips"
+}
+user.toJSON = function () {
+  this.email = "freddie.phillips@example.com"
+  return this
+}
+JSON.stringify(user)
+```
+
+```javascript
+userSchema.methods.toJSON = function () {
+  const user = this
+  console.log(user)
+  const userObject = user.toObject()
+  delete userObject.password
+  delete userObject.tokens
+  return userObject
+}
+```
+
+
+### Authenticating User Endpoints
+
+req (from auth middleware)
+  - user
+  - token
+
+```javascript
+router.patch('/users/me', auth, async (req, res) => {
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['name', 'email', 'password', 'age']
+  const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'Invalid updates!' })
+  }
+  try {
+    updates.forEach(update => 
+      req.user[update] = req.body[update])
+    await req.user.save()
+    res.send(req.user)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+router.delete('/users/me', auth, async (req, res) => {
+  try {
+    await req.user.remove()
+    res.send(req.user)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+### The User/Task Relationship
+
+```javascript
+const Task = mongoose.model('Task', {
+  description: { ... },
+  completed: { ... },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  }
+})
+module.exports = Task
+```
+
+```javascript
+const userSchema = new mongoose.Schema({
+  name: { ... },
+  email: { ... },
+  password: { ... },
+  age: { .., },
+  tokens: [ ... ]
+})
+// virtual field in User
+userSchema.virtual('tasks', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'owner'
+})
+...
+const User = mongoose.model('User', userSchema)
+module.exports = User
+```
+
+```javascript
+router.post('/tasks', auth, async (req, res) => {
+  const task = new Task({
+    ...req.body,
+    owner: req.user._id
+  })
+  try {
+    await task.save()
+    res.status(201).send(task)
+  } catch (e) {
+    res.status(400).send(e)
+  }
+})
+```
+
+```javascript
+  const task = await Task.findById('5c2e505a3253e18a43e612e6')
+  await task.populate('owner').execPopulate()
+  console.log(task.owner)
+```
+
+```javascript
+  const user = await User.findById('5c2e4dcb5eac678a23725b5b')
+  await user.populate('tasks').execPopulate()
+  console.log(user.tasks)
+```
+
+```javascript
+userSchema.set('toObject', { virtuals: true });
+userSchema.set('toJSON', { virtuals: true });
+```
+
+```javascript
+router.get('/users/me', auth, async (req, res) => {
+  await req.user.populate('tasks').execPopulate()
+  res.send(req.user)
+})
+```
+
+
+### Authenticating Task Endpoints
+
+```javascript
+router.get('/tasks', auth, async (req, res) => {
+  try {
+    await req.user.populate('tasks').execPopulate()
+    res.send(req.user.tasks)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+router.get('/tasks/:id', auth, async (req, res) => {
+  const _id = req.params.id
+  try {
+    const task = await Task.findOne({ _id, owner: req.user._id })
+    if (!task) {
+      return res.status(404).send()
+    }
+    res.send(task)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+router.patch('/tasks/:id', auth, async (req, res) => {
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['description', 'completed']
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'Invalid updates!' })
+  }
+  try {
+    const task = await Task.findOne({ _id: req.params.id, owner: req.user._id})
+    
+    if (!task) {
+      return res.status(404).send()
+    }
+    updates.forEach(update => task[update] = req.body[update])
+    await task.save()
+    res.send(task)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
+router.delete('/tasks/:id', auth, async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id })
+    if (!task) {
+      res.status(404).send()
+    }
+    res.send(task)
+  } catch (error) {
+    res.status(500).send()
+  }
+})
+```
+
+
+### Cascade Delete Tasks
+
+```javascript
+userSchema.pre('remove', async function (next) {
+  const user = this
+  await Task.deleteMany({ owner: user._id })
+  next()
+})
+```
+
