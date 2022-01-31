@@ -19,3 +19,18 @@
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`Wrapping UP
 
 * [JavaScript Summary](https://github.com/fetian-debug/JS_story)
+
+## OutComes
+
+* Learn JavaScript by building three real-world web applications.
+
+* Gained a deep understanding of how JavaScript works behind the scenes.
+
+* Explore the latest cutting-edge features from ES6 and ES7.
+
+* Test skills and gain confidence by completing over 80 coding challenges.
+
+* Deploy application to the web so can share them with everyone.
+
+* Use Promises and Async/Await with asynchronous JavaScript.
+

@@ -19,3 +19,11 @@
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`[Firebase Authentication]
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`[Styling Budget App]
 
+## Outcomes: 
+
+* Build, test, and launch React apps.
+* Use cutting-edge ES6/ES7 JavaScript.
+* Setup authentication and user accounts.
+* Deploy React apps live to the web.
+* Learn the latest React libraries and tools.
+* Master React, Redux, React-Router, and more.
