@@ -32,7 +32,7 @@ export default function Home() {
   }, [isAuthenticated]);
 
   function loadNotes() {
-    return API.get("notes", "/invalid_path");
+    return API.get("notes", "/notes");
   }
 
   function renderNotesList(notes) {
