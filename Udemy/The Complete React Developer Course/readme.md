@@ -1,7 +1,7 @@
 # The Complete React Developer Course
 <br />
 
-- ![100%](https://progress-bar.dev/40/?title=Done)
+- ![100%](https://progress-bar.dev/100/?title=Done)
 
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`[Hello React](#hello)
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`[React Component](#component)
