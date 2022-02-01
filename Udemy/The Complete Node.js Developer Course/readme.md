@@ -22,4 +22,28 @@
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`Real-Time Web Application With Socket.io (Chat App)
 - [x] ![#0D64C3](https://via.placeholder.com/12/0D64C3/000000?text=+) `done`Wrapping UP
 
+## Outcomes:
+---------------------
+* Build, test, and launch Node apps.
+* Create Express web servers and APIs.
+* Store data with Mongoose and MongoDB.
+* Use cutting-edge ES6/ES7 JavaScript.
+* Deploy Node apps to production.
+* Create real-time web apps with SocketIO.
 
+## NodeJs Projects
+------------------
+* Project: [Notes-NodeJs](https://github.com/fetian-debug/fetian-notes-app)
+
+
+* Project: [Task Manager API](https://github.com/fetian-debug/fetian-task-manager-app)
+
+
+* Live Preview: [Weather App](https://fetian-weather.herokuapp.com/)
+
+* Project: [Weather App](https://github.com/fetian-debug/fetian-weather-app)
+
+
+* Live Preview: [Chat App](https://fetian-chat.herokuapp.com/)
+
+* Project: [Chat App](https://github.com/fetian-debug/fetian-chat-app)
