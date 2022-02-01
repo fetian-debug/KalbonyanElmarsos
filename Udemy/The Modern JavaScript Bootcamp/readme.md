@@ -34,3 +34,19 @@
 
 * Use Promises and Async/Await with asynchronous JavaScript.
 
+## JavaScript Projects
+
+- Live Preview: [My Todo app](http://fetian-todo.surge.sh/)
+
+- Project: [My Todo app](https://github.com/fetian-debug/fetian-todo)
+
+
+- Live Preview: [My Notes app](http://fetian-notes.surge.sh/)
+
+- Project: [My Notes app](https://github.com/fetian-debug/fetian-notes)
+
+
+- Live Preview: [Hangman-Game](http://fetian-hangman.surge.sh/)
+
+- Project: [Hangman Game App](https://github.com/fetian-debug/fetian-hangman)
+
